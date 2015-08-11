@@ -1,6 +1,9 @@
 package HttpReqeust;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HttpRequest {
@@ -10,10 +13,12 @@ public class HttpRequest {
 	String URI;
 	String method;
 	String protocol;
+	ArrayConverter arrayConverter;
 	
 
 	public HttpRequest(String header) {
-		parseHeader(header);	
+		arrayConverter = new ArrayConverter();
+		parseHeader(header);
 	}
 	
 	public String[] parseEnter(String header) {
@@ -21,27 +26,25 @@ public class HttpRequest {
 	}
 
 	private void parseHeader(String header) {
-		String[] result = parseEnter(header);
-		String[] requestLineResult = result[0].split(" ");
-		method = requestLineResult[0];
-		String[] uriResult = requestLineResult[1].split("\\?");
+		ArrayList<String> lines = arrayConverter.toArrayList(parseEnter(header));
+		killRequestLine(lines.get(0));
+		putValueIntoMap(headers, lines.subList(1, lines.size()),": ");
 		
-		String[] headerResult = new String[result.length-1];
-		for(int i=1; i<result.length; i++){
-			headerResult[i-1] = result[i];
-		}
-		
-		URI = uriResult[0];
-		String[] parameterResult = uriResult[1].split("&");
-		putValueIntoMap(parameters, parameterResult, "=");
-		putValueIntoMap(headers, headerResult,": ");
-		
-		protocol = requestLineResult[2];
 	}
 
-	private void putValueIntoMap(Map map, String[] keyValue, String token) {
-		for (int i=0; i<keyValue.length; i++) {
-			String[] splitResult = keyValue[i].split(token);
+	private void killRequestLine(String requestLine) {
+		String[] requestLineResult = requestLine.split(" ");
+		method = requestLineResult[0];
+		String[] uriResult = requestLineResult[1].split("\\?");		
+		protocol = requestLineResult[2];
+		URI = uriResult[0];
+		ArrayList<String> parameterResult = arrayConverter.toArrayList(uriResult[1].split("&"));
+		putValueIntoMap(parameters, parameterResult, "=");
+	}
+
+	private void putValueIntoMap(Map map, List keyValue, String token) {
+		for (int i=0; i<keyValue.size(); i++) {
+			String[] splitResult = (keyValue.get(i).toString()).split(token);
 			map.put(splitResult[0], splitResult[1]);
 		}
 	}
