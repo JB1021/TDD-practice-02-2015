@@ -11,17 +11,6 @@ public class HttpRequest {
 	String method;
 	String protocol;
 	
-	public String getURI() {
-		return URI;
-	}
-
-	public String getMethod() {
-		return method;
-	}
-
-	public String getProtocol() {
-		return protocol;
-	}
 
 	public HttpRequest(String header) {
 		parseHeader(header);	
@@ -36,23 +25,25 @@ public class HttpRequest {
 		String[] requestLineResult = result[0].split(" ");
 		method = requestLineResult[0];
 		String[] uriResult = requestLineResult[1].split("\\?");
+		
+		String[] headerResult = new String[result.length-1];
+		for(int i=1; i<result.length; i++){
+			headerResult[i-1] = result[i];
+		}
+		
 		URI = uriResult[0];
 		String[] parameterResult = uriResult[1].split("&");
-		
 		putValueIntoMap(parameters, parameterResult, "=");
-		putValueIntoMap(headers, result,": ");
+		putValueIntoMap(headers, headerResult,": ");
+		
 		protocol = requestLineResult[2];
 	}
 
 	private void putValueIntoMap(Map map, String[] keyValue, String token) {
 		for (int i=0; i<keyValue.length; i++) {
 			String[] splitResult = keyValue[i].split(token);
-			headers.put(splitResult[0], splitResult[1]);
+			map.put(splitResult[0], splitResult[1]);
 		}
-	}
-
-	public Map getHeaders() {
-		return headers;
 	}
 
 	public Map parseRequestLine(String requestLine) {
@@ -68,5 +59,17 @@ public class HttpRequest {
 	public String getHeader(String header) {
 		System.out.println(headers.get(header));
 		return headers.get(header).toString();
+	}
+	
+	public String getURI() {
+		return URI;
+	}
+	
+	public String getMethod() {
+		return method;
+	}
+	
+	public String getProtocol() {
+		return protocol;
 	}
 }
