@@ -19,6 +19,8 @@ public class HttpRequestTest {
 	String name = "%EB%B0%95%EC%9E%AC%EC%84%B1";
 	String email = "javajigi%40slipp.net";
 	String host = "localhost:8080";
+	String connection = "keep-alive";
+	String accept = "*/*";
 	String url = "/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
 	String URI = "/create";
 	String method = "GET";
@@ -35,25 +37,28 @@ public class HttpRequestTest {
 	}
 	
 	@Test
-	public void parseOthersTest() throws Exception {
-		Map headerMap = request.getHeaderMap();
-		
-	}
-	
-	@Test
-	public void parseRequestLineTest() throws Exception {
-		
-		Map requestLineMap = request.parseRequestLine(requestLine);
-		
-		// TODO : getParameter로 한 번 감싸기 
-		assertEquals(method, requestLineMap.get("method"));
-		assertEquals(url, requestLineMap.get("url"));
-	}
-
-	@Test
 	public void getParameterTest() throws Exception {
+		assertEquals(userId, request.getParameter("userId"));
+		assertEquals(password, request.getParameter("password"));
+		assertEquals(name, request.getParameter("name"));
+		assertEquals(email, request.getParameter("email"));
+	}
+	@Test
+	public void getMethodTest() throws Exception {
+		assertEquals(method, request.getMethod());
 	
-		//assertEqual(userId, request.getParameter("userId"));
+	}
+	@Test
+	public void getURITest() throws Exception {
+		assertEquals(URI, request.getURI());
+	
+	}
+	
+	@Test
+	public void getHeadersTest() throws Exception {
+		assertEquals(host, request.getHeader("Host"));
+		assertEquals(connection, request.getHeader("Connection"));
+		assertEquals(accept, request.getHeader("Accept"));
 	}
 
 }
