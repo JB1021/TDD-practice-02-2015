@@ -14,10 +14,11 @@ public class HttpRequest {
 	String method;
 	String protocol;
 	ArrayConverter arrayConverter;
-	
+	RequestLineParser requestLineParser;
 
 	public HttpRequest(String header) {
 		arrayConverter = new ArrayConverter();
+		
 		parseHeader(header);
 	}
 	
@@ -27,13 +28,20 @@ public class HttpRequest {
 
 	private void parseHeader(String header) {
 		ArrayList<String> lines = arrayConverter.toArrayList(parseEnter(header));
-		killRequestLine(lines.get(0));
+		killRequestLine(getRequestLine(lines));
 		putValueIntoMap(headers, lines.subList(1, lines.size()),": ");
 		
 	}
 
+	private String getRequestLine(ArrayList<String> lines) {
+		return lines.get(0);
+	}
+
 	private void killRequestLine(String requestLine) {
 		String[] requestLineResult = requestLine.split(" ");
+		requestLineParser.set(requestLine);
+		re
+		
 		method = requestLineResult[0];
 		String[] uriResult = requestLineResult[1].split("\\?");		
 		protocol = requestLineResult[2];
